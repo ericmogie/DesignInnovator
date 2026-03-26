@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eric Mogensen — MOGIE | Creative Director &amp; Designer</title>
+    <meta name="description" content="Eric Mogensen is a Creative Director and Designer with 27+ years of experience in brand systems, AI integration, and front-end development.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Playfair+Display:ital,wght@1,400;1,500;1,600&amp;family=JetBrains+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+
+    <style>
+        /* ─────────────────────────────────────────────
+           TOKENS
+        ───────────────────────────────────────────── */
+        :root {
+            --black:   #000000;
+            --black-2: #080808;
+            --black-3: #0f0f0f;
+            --black-4: #161616;
+            --black-5: #1e1e1e;
+            --white:   #ffffff;
+            --white-2: #e8e8e8;
+            --gray-1:  #a0a0a0;
+            --gray-2:  #666666;
+            --gray-3:  #333333;
+            --border:  rgba(255,255,255,0.07);
+            --border2: rgba(255,255,255,0.12);
+            --ff-sans: 'Inter', -apple-system, sans-serif;
+            --ff-serif: 'Playfair Display', Georgia, serif;
+            --ff-mono:  'JetBrains Mono', monospace;
+            --ease:    cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ─────────────────────────────────────────────
+           RESET
+        ───────────────────────────────────────────── */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; font-size:16px; }
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--ff-sans);
+            font-weight: 400;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: inherit; text-decoration: none; }
+        ul { list-style: none; }
+        img { display: block; max-width: 100%; }
+
+        /* ─────────────────────────────────────────────
+           NAVIGATION
+        ───────────────────────────────────────────── */
+        #nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 500;
+            padding: 32px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: padding 0.4s var(--ease), background 0.4s ease;
+        }
+        #nav.scrolled {
+            padding: 18px 48px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            font-family: var(--ff-sans);
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: -0.01em;
+            color: var(--white);
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+        .nav-email {
+            font-family: var(--ff-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gray-1);
+            transition: color 0.25s ease;
+        }
+        .nav-email:hover { color: var(--white); }
+
+        /* Hamburger */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .hamburger span {
+            display: block;
+            height: 1.5px;
+            background: var(--white);
+            transition: all 0.3s var(--ease);
+            transform-origin: center;
+        }
+        .hamburger span:nth-child(1) { width: 100%; }
+        .hamburger span:nth-child(2) { width: 70%; margin-left: auto; }
+
+        /* Fullscreen menu */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 400;
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 48px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .menu-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .menu-item {
+            font-family: var(--ff-sans);
+            font-size: clamp(2.8rem, 6vw, 6rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            color: var(--gray-3);
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+        .menu-item:hover { color: var(--white); }
+        .menu-item em {
+            font-family: var(--ff-serif);
+            font-weight: 500;
+            font-style: italic;
+            color: var(--gray-2);
+            transition: color 0.2s ease;
+        }
+        .menu-item:hover em { color: var(--white-2); }
+        .menu-footer {
+            margin-top: auto;
+            padding-top: 64px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        .menu-footer a {
+            font-family: var(--ff-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--gray-2);
+            transition: color 0.2s ease;
+        }
+        .menu-footer a:hover { color: var(--white); }
+
+        /* ─────────────────────────────────────────────
+           HERO
+        ───────────────────────────────────────────── */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background abstract shapes – like the flowing dark silk in Renok */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .hero-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+        }
+        .hero-blob-1 {
+            width: 700px; height: 700px;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, #2a2a2a 0%, transparent 70%);
+            animation: blobDrift1 20s ease-in-out infinite;
+        }
+        .hero-blob-2 {
+            width: 500px; height: 300px;
+            bottom: 100px; left: -100px;
+            background: radial-gradient(ellipse, #1a1a1a 0%, transparent 70%);
+            animation: blobDrift2 16s ease-in-out infinite;
+        }
+        .hero-blob-3 {
+            width: 400px; height: 400px;
+            bottom: -100px; right: -50px;
+            background: radial-gradient(ellipse, #1a1a1a 0%, transparent 70%);
+            animation: blobDrift3 18s ease-in-out infinite;
+        }
+        @keyframes blobDrift1 {
+            0%,100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1) translateY(30px); }
+        }
+        @keyframes blobDrift2 {
+            0%,100% { transform: rotate(0deg); }
+            50% { transform: rotate(20deg) scale(1.1); }
+        }
+        @keyframes blobDrift3 {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.15) rotate(-15deg); }
+        }
+
+        /* Eyebrow label */
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--ff-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-2);
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeUp 0.7s var(--ease) 0.2s forwards;
+        }
+        .hero-label::before, .hero-label::after {
+            content: '';
+            display: block;
+            width: 20px; height: 1px;
+            background: var(--gray-3);
+        }
+
+        /* Headline — the Renok signature: bold grotesque + italic serif inline */
+        .hero-headline {
+            font-family: var(--ff-sans);
+            font-size: clamp(3.2rem, 8.5vw, 9.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 0.95;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 36px;
+        }
+        .hero-headline .line { display: block; overflow: hidden; }
+        .hero-headline .line span {
+            display: block;
+            opacity: 0;
+            transform: translateY(105%);
+            animation: slideUp 0.9s var(--ease) forwards;
+        }
+        .hero-headline .line:nth-child(1) span { animation-delay: 0.3s; }
+        .hero-headline .line:nth-child(2) span { animation-delay: 0.45s; }
+        .hero-headline .line:nth-child(3) span { animation-delay: 0.58s; }
+        /* The italic serif accent word/phrase — like "/websites" in Renok */
+        .hero-headline em {
+            font-family: var(--ff-serif);
+            font-weight: 500;
+            font-style: italic;
+            color: var(--white-2);
+            letter-spacing: -0.02em;
+        }
+
+        /* Sub-copy */
+        .hero-sub {
+            font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+            font-weight: 400;
+            color: var(--gray-1);
+            max-width: 520px;
+            line-height: 1.75;
+            margin-bottom: 52px;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeUp 0.7s var(--ease) 0.8s forwards;
+        }
+
+        /* Pill button — Renok's signature CTA style */
+        .btn-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--white);
+            color: var(--black);
+            font-family: var(--ff-sans);
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 18px 40px;
+            border-radius: 100px;
+            transition: background 0.25s ease, transform 0.25s ease;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeUp 0.7s var(--ease) 0.95s forwards;
+        }
+        .btn-pill:hover {
+            background: var(--white-2);
+            transform: scale(1.02);
+        }
+        .btn-pill .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--black);
+        }
+
+        /* Floating work preview cards — scattered like Renok's hero bottom */
+        .hero-cards {
+            width: 100%;
+            max-width: 1200px;
+            height: 320px;
+            position: relative;
+            margin-top: 80px;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeIn 1.2s ease 1.3s forwards;
+        }
+        .hcard {
+            position: absolute;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+            transition: transform 0.6s var(--ease);
+        }
+        .hcard:hover { transform: translateY(-8px) rotate(0deg) scale(1.02) !important; }
+        .hcard-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+        .hcard-label {
+            font-family: var(--ff-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            background: rgba(0,0,0,0.4);
+            padding: 5px 10px;
+            border-radius: 4px;
+            backdrop-filter: blur(8px);
+        }
+
+        /* Card positions & rotations */
+        .hcard-1 {
+            width: 200px; height: 260px;
+            left: 2%; bottom: 0;
+            transform: rotate(-4deg);
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .hcard-2 {
+            width: 320px; height: 290px;
+            left: 16%; bottom: 0;
+            transform: rotate(-1.5deg);
+            background: linear-gradient(145deg, #1c1c1c, #111);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .hcard-3 {
+            width: 280px; height: 270px;
+            left: 38%; bottom: 0;
+            transform: rotate(1deg);
+            background: linear-gradient(145deg, #181818, #0e0e0e);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .hcard-4 {
+            width: 240px; height: 285px;
+            right: 18%; bottom: 0;
+            transform: rotate(2.5deg);
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .hcard-5 {
+            width: 200px; height: 255px;
+            right: 1%; bottom: 0;
+            transform: rotate(4deg);
+            background: linear-gradient(145deg, #171717, #0c0c0c);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* Card content icons */
+        .hcard-icon {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -55%);
+            font-size: 3rem;
+            opacity: 0.18;
+        }
+        .hcard-title {
+            position: absolute;
+            top: 28px; left: 20px; right: 20px;
+            font-family: var(--ff-sans);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+        }
+        .hcard-num {
+            position: absolute;
+            top: 16px; right: 16px;
+            font-family: var(--ff-mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.2);
+        }
+
+        /* ─────────────────────────────────────────────
+           TICKER
+        ───────────────────────────────────────────── */
+        .ticker {
+            overflow: hidden;
+            padding: 20px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--black-2);
+        }
+        .ticker-track {
+            display: flex;
+            width: max-content;
+            animation: ticker 40s linear infinite;
+        }
+        .ticker:hover .ticker-track { animation-play-state: paused; }
+        .ticker-item {
+            font-family: var(--ff-sans);
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            color: var(--gray-3);
+            padding: 0 36px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: color 0.3s ease;
+            cursor: default;
+        }
+        .ticker-item em {
+            font-family: var(--ff-serif);
+            font-style: italic;
+            font-weight: 400;
+        }
+        .ticker-item:hover { color: var(--gray-1); }
+        .ticker-sep {
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--gray-3);
+            flex-shrink: 0;
+        }
+        @keyframes ticker {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        /* ─────────────────────────────────────────────
+           SHARED SECTION STYLES
+        ───────────────────────────────────────────── */
+        .section { padding: 140px 80px; }
+        .section--tight { padding: 100px 80px; }
+
+        .s-label {
+            font-family: var(--ff-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 64px;
+        }
+        .s-label::before {
+            content: '';
+            width: 24px; height: 1px;
+            background: var(--gray-3);
+        }
+
+        /* Mixed headline — bold grotesque + italic serif signature */
+        .s-headline {
+            font-family: var(--ff-sans);
+            font-size: clamp(2.6rem, 5vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 0.97;
+            color: var(--white);
+        }
+        .s-headline em {
+            font-family: var(--ff-serif);
+            font-weight: 500;
+            font-style: italic;
+            color: var(--white-2);
+            letter-spacing: -0.02em;
+        }
+
+        /* ─────────────────────────────────────────────
+           PHILOSOPHY SECTION
+        ───────────────────────────────────────────── */
+        #philosophy {
+            border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 140px 80px;
+        }
+        .phi-quote {
+            font-family: var(--ff-sans);
+            font-size: clamp(1.6rem, 3vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            color: var(--white);
+            max-width: 860px;
+            margin: 0 auto;
+        }
+        .phi-quote em {
+            font-family: var(--ff-serif);
+            font-weight: 500;
+            font-style: italic;
+            color: var(--gray-1);
+        }
+        .phi-attr {
+            font-family: var(--ff-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--gray-2);
+            margin-top: 36px;
+        }
+
+        /* ─────────────────────────────────────────────
+           WORK SECTION
+        ───────────────────────────────────────────── */
+        #work { border-top: 1px solid var(--border); }
+        .work-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+        .work-link {
+            font-family: var(--ff-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--gray-2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--gray-3);
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+        .work-link:hover { color: var(--white); border-color: var(--white); }
+
+        /* Work list — large row items like agency portfolio lists */
+        .work-list { display: flex; flex-direction: column; }
+        .wrow {
+            display: grid;
+            grid-template-columns: 64px 1fr auto;
+            align-items: center;
+            gap: 40px;
+            padding: 36px 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            position: relative;
+            transition: padding-left 0.3s var(--ease);
+        }
+        .wrow:first-child { border-top: 1px solid var(--border); }
+        .wrow:hover { padding-left: 16px; }
+        .wrow::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 0;
+            background: var(--border);
+            transition: width 0.3s var(--ease);
+        }
+        .wrow:hover::after { width: 3px; }
+
+        .wrow-num {
+            font-family: var(--ff-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            color: var(--gray-3);
+        }
+        .wrow-content {}
+        .wrow-title {
+            font-family: var(--ff-sans);
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--gray-2);
+            line-height: 1.1;
+            transition: color 0.25s ease;
+            margin-bottom: 6px;
+        }
+        .wrow:hover .wrow-title { color: var(--white); }
+        .wrow-desc {
+            font-size: 0.82rem;
+            color: var(--gray-3);
+            font-weight: 400;
+            max-width: 520px;
+            line-height: 1.6;
+            transition: color 0.25s ease;
+        }
+        .wrow:hover .wrow-desc { color: var(--gray-2); }
+        .wrow-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .wrow-tag {
+            font-family: var(--ff-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border: 1px solid var(--gray-3);
+            color: var(--gray-3);
+            border-radius: 100px;
+            transition: border-color 0.25s ease, color 0.25s ease;
+        }
+        .wrow:hover .wrow-tag { border-color: var(--gray-2); color: var(--gray-1); }
+        .wrow-arrow {
+            font-size: 1rem;
+            color: var(--gray-3);
+            transition: transform 0.3s var(--ease), color 0.25s ease;
+        }
+        .wrow:hover .wrow-arrow { transform: translateX(6px); color: var(--white); }
+
+        /* ─────────────────────────────────────────────
+           CAPABILITIES SECTION
+        ───────────────────────────────────────────── */
+        #capabilities {
+            background: var(--black-2);
+            border-top: 1px solid var(--border);
+        }
+        .cap-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 120px;
+            align-items: start;
+        }
+        .cap-left {}
+        .cap-intro {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--gray-1);
+            line-height: 1.85;
+            margin-top: 32px;
+            max-width: 380px;
+        }
+        .cap-right {}
+        .cap-list { display: flex; flex-direction: column; }
+        .cap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 32px;
+            padding: 32px 0;
+            border-bottom: 1px solid var(--border);
+            transition: padding-left 0.3s var(--ease);
+        }
+        .cap-item:first-child { border-top: 1px solid var(--border); }
+        .cap-item:hover { padding-left: 10px; }
+        .cap-item-num {
+            font-family: var(--ff-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            color: var(--gray-3);
+            padding-top: 5px;
+            flex-shrink: 0;
+            width: 32px;
+        }
+        .cap-item-body {}
+        .cap-item-name {
+            font-family: var(--ff-sans);
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--gray-2);
+            margin-bottom: 8px;
+            transition: color 0.25s ease;
+        }
+        .cap-item:hover .cap-item-name { color: var(--white); }
+        .cap-item-desc {
+            font-size: 0.82rem;
+            color: var(--gray-3);
+            line-height: 1.7;
+            font-weight: 400;
+            transition: color 0.25s ease;
+        }
+        .cap-item:hover .cap-item-desc { color: var(--gray-2); }
+
+        /* ─────────────────────────────────────────────
+           ABOUT SECTION
+        ───────────────────────────────────────────── */
+        #about { border-top: 1px solid var(--border); }
+        .about-layout {
+            display: grid;
+            grid-template-columns: 5fr 6fr;
+            gap: 100px;
+            align-items: start;
+            margin-top: 80px;
+        }
+        .about-left {}
+        .about-stat-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            margin-top: 56px;
+        }
+        .astat {
+            background: var(--black);
+            padding: 32px 28px;
+        }
+        .astat-n {
+            font-family: var(--ff-sans);
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            color: var(--white);
+        }
+        .astat-l {
+            font-family: var(--ff-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--gray-3);
+            margin-top: 8px;
+        }
+        .about-right {}
+        .about-right h3 {
+            font-family: var(--ff-sans);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.5;
+            color: var(--white);
+            margin-bottom: 28px;
+        }
+        .about-right p {
+            font-size: 0.87rem;
+            font-weight: 400;
+            color: var(--gray-1);
+            line-height: 1.85;
+            margin-bottom: 18px;
+        }
+        .tools-label {
+            font-family: var(--ff-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-2);
+            margin-bottom: 18px;
+            margin-top: 44px;
+        }
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip {
+            font-family: var(--ff-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.06em;
+            padding: 5px 14px;
+            border: 1px solid var(--gray-3);
+            border-radius: 100px;
+            color: var(--gray-2);
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+        .chip:hover { border-color: var(--gray-1); color: var(--white); }
+
+        /* ─────────────────────────────────────────────
+           EXPERIENCE SECTION
+        ───────────────────────────────────────────── */
+        #experience {
+            background: var(--black-2);
+            border-top: 1px solid var(--border);
+        }
+        .exp-list { display: flex; flex-direction: column; margin-top: 80px; }
+        .exp-item {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            padding: 52px 0;
+            border-bottom: 1px solid var(--border);
+            transition: padding-left 0.3s var(--ease);
+        }
+        .exp-item:first-child { border-top: 1px solid var(--border); }
+        .exp-item:hover { padding-left: 16px; }
+        .exp-meta {}
+        .exp-period {
+            font-family: var(--ff-mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.12em;
+            color: var(--gray-3);
+            margin-bottom: 12px;
+        }
+        .exp-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--ff-mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border: 1px solid var(--gray-3);
+            color: var(--gray-2);
+            border-radius: 100px;
+        }
+        .exp-badge .live {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--white);
+            animation: liveFlash 2s ease-in-out infinite;
+        }
+        @keyframes liveFlash {
+            0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+        }
+        .exp-content {}
+        .exp-role {
+            font-family: var(--ff-sans);
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: 1.1;
+            color: var(--gray-2);
+            margin-bottom: 6px;
+            transition: color 0.25s ease;
+        }
+        .exp-item:hover .exp-role { color: var(--white); }
+        .exp-company {
+            font-family: var(--ff-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--gray-3);
+            margin-bottom: 18px;
+            transition: color 0.25s ease;
+        }
+        .exp-item:hover .exp-company { color: var(--gray-2); }
+        .exp-desc {
+            font-size: 0.84rem;
+            font-weight: 400;
+            color: var(--gray-3);
+            line-height: 1.8;
+            max-width: 580px;
+            transition: color 0.25s ease;
+        }
+        .exp-item:hover .exp-desc { color: var(--gray-1); }
+
+        /* ─────────────────────────────────────────────
+           CTA SECTION
+        ───────────────────────────────────────────── */
+        #contact {
+            border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 180px 80px;
+        }
+        .cta-label {
+            font-family: var(--ff-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 48px;
+        }
+        .cta-label::before, .cta-label::after {
+            content: ''; width: 20px; height: 1px; background: var(--gray-3);
+        }
+        .cta-headline {
+            font-family: var(--ff-sans);
+            font-size: clamp(3rem, 8vw, 8.5rem);
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            line-height: 0.93;
+            color: var(--white);
+            margin-bottom: 56px;
+        }
+        .cta-headline em {
+            font-family: var(--ff-serif);
+            font-weight: 500;
+            font-style: italic;
+            color: var(--gray-1);
+            letter-spacing: -0.02em;
+        }
+        .cta-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 72px;
+        }
+        /* Outline pill button */
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--white);
+            font-family: var(--ff-sans);
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 18px 40px;
+            border-radius: 100px;
+            border: 1px solid var(--gray-3);
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+        }
+        .btn-outline:hover {
+            border-color: var(--white);
+            background: rgba(255,255,255,0.04);
+            transform: scale(1.02);
+        }
+        .cta-contact {
+            display: flex;
+            gap: 48px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .clink {
+            font-family: var(--ff-mono);
+            font-size: 0.66rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gray-3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.2s ease;
+        }
+        .clink:hover { color: var(--white); }
+
+        /* ─────────────────────────────────────────────
+           FOOTER
+        ───────────────────────────────────────────── */
+        footer {
+            padding: 36px 80px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .footer-brand {
+            font-family: var(--ff-sans);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--gray-3);
+        }
+        .footer-copy {
+            font-family: var(--ff-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.1em;
+            color: var(--gray-3);
+        }
+        .footer-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .footer-nav a {
+            font-family: var(--ff-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gray-3);
+            transition: color 0.2s ease;
+        }
+        .footer-nav a:hover { color: var(--white); }
+
+        /* ─────────────────────────────────────────────
+           REVEAL ANIMATIONS
+        ───────────────────────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+        }
+        .reveal.in { opacity: 1; transform: translateY(0); }
+        .d1 { transition-delay: 0.1s; }
+        .d2 { transition-delay: 0.2s; }
+        .d3 { transition-delay: 0.3s; }
+
+        /* ─────────────────────────────────────────────
+           KEYFRAMES
+        ───────────────────────────────────────────── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(105%); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* ─────────────────────────────────────────────
+           RESPONSIVE
+        ───────────────────────────────────────────── */
+        @media (max-width: 1100px) {
+            .section, .section--tight { padding: 100px 48px; }
+            #contact { padding: 130px 48px; }
+            footer { padding: 28px 48px; }
+            #nav, #nav.scrolled { padding-left: 36px; padding-right: 36px; }
+            .menu-overlay { padding: 80px 36px; }
+            .cap-layout { grid-template-columns: 1fr; gap: 60px; }
+            .about-layout { grid-template-columns: 1fr; gap: 60px; }
+            .exp-item { grid-template-columns: 160px 1fr; gap: 40px; }
+        }
+        @media (max-width: 768px) {
+            .section, .section--tight { padding: 80px 24px; }
+            #philosophy { padding: 80px 24px; }
+            #contact { padding: 100px 24px; }
+            footer { padding: 24px; flex-direction: column; text-align: center; gap: 16px; }
+            #nav, #nav.scrolled { padding: 20px 24px; }
+            .menu-overlay { padding: 100px 24px 40px; }
+            .nav-email { display: none; }
+            .hero-cards { display: none; }
+            .hero-headline { font-size: clamp(2.8rem, 11vw, 5rem); }
+            .work-header { flex-direction: column; align-items: flex-start; }
+            .wrow { grid-template-columns: 48px 1fr; gap: 20px; }
+            .wrow-meta { display: none; }
+            .exp-item { grid-template-columns: 1fr; gap: 8px; }
+            .cta-contact { flex-direction: column; align-items: center; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     NAV
+═══════════════════════════════════════════════ -->
+<nav id="nav">
+    <a href="#hero" class="nav-logo">Mogie</a>
+    <div class="nav-right">
+        <a href="mailto:ericmogie@gmail.com" class="nav-email">ericmogie@gmail.com</a>
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Fullscreen menu overlay -->
+<div class="menu-overlay" id="menuOverlay">
+    <div class="menu-items">
+        <a href="#work" class="menu-item" onclick="closeMenu()">Work</a>
+        <a href="#capabilities" class="menu-item" onclick="closeMenu()"><em>/</em>Capabilities</a>
+        <a href="#about" class="menu-item" onclick="closeMenu()">About</a>
+        <a href="#experience" class="menu-item" onclick="closeMenu()"><em>/</em>Experience</a>
+        <a href="#contact" class="menu-item" onclick="closeMenu()">Contact</a>
+    </div>
+    <div class="menu-footer">
+        <a href="mailto:ericmogie@gmail.com">ericmogie@gmail.com</a>
+        <a href="tel:2242791031">(224) 279-1031</a>
+        <a href="https://www.linkedin.com/in/ericmogensen" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════ -->
+<section id="hero">
+    <div class="hero-bg">
+        <div class="hero-blob hero-blob-1"></div>
+        <div class="hero-blob hero-blob-2"></div>
+        <div class="hero-blob hero-blob-3"></div>
+    </div>
+
+    <p class="hero-label">Creative Director &amp; Designer — Chicago</p>
+
+    <h1 class="hero-headline">
+        <span class="line"><span>Design that</span></span>
+        <span class="line"><span><em>/moves</em> people</span></span>
+        <span class="line"><span>forward.</span></span>
+    </h1>
+
+    <p class="hero-sub">
+        Good creative isn't complicated. It's clear, thoughtful, and led with purpose —
+        that's my approach to every brand, tool, and campaign I build.
+    </p>
+
+    <a href="#contact" class="btn-pill">
+        Let's talk <span class="dot"></span>
+    </a>
+
+    <!-- Floating scattered work preview cards -->
+    <div class="hero-cards">
+        <div class="hcard hcard-1">
+            <span class="hcard-num">01</span>
+            <span class="hcard-title">AI Flyer Builder</span>
+            <span class="hcard-icon">🤖</span>
+            <div class="hcard-inner">
+                <span class="hcard-label">AI + Design</span>
+            </div>
+        </div>
+        <div class="hcard hcard-2">
+            <span class="hcard-num">02</span>
+            <span class="hcard-title">Brand System</span>
+            <span class="hcard-icon">📐</span>
+            <div class="hcard-inner">
+                <span class="hcard-label">Brand</span>
+            </div>
+        </div>
+        <div class="hcard hcard-3">
+            <span class="hcard-num">03</span>
+            <span class="hcard-title">100-Year Campaign</span>
+            <span class="hcard-icon">🎉</span>
+            <div class="hcard-inner">
+                <span class="hcard-label">Campaign</span>
+            </div>
+        </div>
+        <div class="hcard hcard-4">
+            <span class="hcard-num">04</span>
+            <span class="hcard-title">AI Strategy</span>
+            <span class="hcard-icon">🧠</span>
+            <div class="hcard-inner">
+                <span class="hcard-label">Strategy</span>
+            </div>
+        </div>
+        <div class="hcard hcard-5">
+            <span class="hcard-num">05</span>
+            <span class="hcard-title">Web Campaigns</span>
+            <span class="hcard-icon">💻</span>
+            <div class="hcard-inner">
+                <span class="hcard-label">Digital</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     TICKER
+═══════════════════════════════════════════════ -->
+<div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+        <span class="ticker-item">Brand Systems <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>AI Integration</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">Design Strategy <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Front-End Dev</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">Campaign Design <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Photography</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">User Experience <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Creative Direction</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">Design Systems <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Print &amp; Digital</em> <span class="ticker-sep"></span></span>
+        <!-- duplicate for seamless loop -->
+        <span class="ticker-item">Brand Systems <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>AI Integration</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">Design Strategy <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Front-End Dev</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">Campaign Design <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Photography</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">User Experience <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Creative Direction</em> <span class="ticker-sep"></span></span>
+        <span class="ticker-item">Design Systems <span class="ticker-sep"></span></span>
+        <span class="ticker-item"><em>Print &amp; Digital</em> <span class="ticker-sep"></span></span>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PHILOSOPHY
+═══════════════════════════════════════════════ -->
+<section id="philosophy">
+    <div class="s-label reveal">Philosophy</div>
+    <blockquote class="phi-quote reveal d1">
+        "Good creative isn't complicated. It's <em>clear, thoughtful</em>
+        and led with purpose — that's my approach to every project,
+        from enterprise brand systems to AI-powered tools."
+    </blockquote>
+    <p class="phi-attr reveal d2">— Eric Mogensen, Creative Director</p>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     WORK
+═══════════════════════════════════════════════ -->
+<section id="work" class="section">
+    <div class="work-header">
+        <div>
+            <div class="s-label reveal">Selected Work</div>
+            <h2 class="s-headline reveal d1">Work that solves<br><em>/real problems.</em></h2>
+        </div>
+        <a href="#contact" class="work-link reveal d2">Discuss a project →</a>
+    </div>
+
+    <div class="work-list reveal">
+        <div class="wrow">
+            <span class="wrow-num">01</span>
+            <div class="wrow-content">
+                <h3 class="wrow-title">AI-Powered Flyer Builder</h3>
+                <p class="wrow-desc">A custom tool enabling non-designers to create on-brand marketing materials in minutes — bridging AI capability with brand governance at enterprise scale.</p>
+            </div>
+            <div class="wrow-meta">
+                <span class="wrow-tag">AI + Design</span>
+                <span class="wrow-arrow">→</span>
+            </div>
+        </div>
+
+        <div class="wrow">
+            <span class="wrow-num">02</span>
+            <div class="wrow-content">
+                <h3 class="wrow-title">Brand Guidelines &amp; Design System</h3>
+                <p class="wrow-desc">Enterprise-scale design system ensuring consistent, on-brand expression across all digital and print touchpoints.</p>
+            </div>
+            <div class="wrow-meta">
+                <span class="wrow-tag">Brand</span>
+                <span class="wrow-arrow">→</span>
+            </div>
+        </div>
+
+        <div class="wrow">
+            <span class="wrow-num">03</span>
+            <div class="wrow-content">
+                <h3 class="wrow-title">AI Integration Strategy</h3>
+                <p class="wrow-desc">Org-wide AI adoption roadmap for creative operations — from prompt engineering to full workflow automation and custom tooling.</p>
+            </div>
+            <div class="wrow-meta">
+                <span class="wrow-tag">Strategy</span>
+                <span class="wrow-arrow">→</span>
+            </div>
+        </div>
+
+        <div class="wrow">
+            <span class="wrow-num">04</span>
+            <div class="wrow-content">
+                <h3 class="wrow-title">100-Year Anniversary Campaign</h3>
+                <p class="wrow-desc">Multi-channel campaign celebrating a century of Grainger — spanning web, email, social, print, and experiential.</p>
+            </div>
+            <div class="wrow-meta">
+                <span class="wrow-tag">Campaign</span>
+                <span class="wrow-arrow">→</span>
+            </div>
+        </div>
+
+        <div class="wrow">
+            <span class="wrow-num">05</span>
+            <div class="wrow-content">
+                <h3 class="wrow-title">AI Metadata Generator</h3>
+                <p class="wrow-desc">AI-assisted metadata tooling for large-scale DAM operations, dramatically reducing manual tagging effort and improving content discoverability.</p>
+            </div>
+            <div class="wrow-meta">
+                <span class="wrow-tag">Tools</span>
+                <span class="wrow-arrow">→</span>
+            </div>
+        </div>
+
+        <div class="wrow">
+            <span class="wrow-num">06</span>
+            <div class="wrow-content">
+                <h3 class="wrow-title">Web Pages &amp; Digital Campaigns</h3>
+                <p class="wrow-desc">End-to-end design and front-end development of high-converting landing pages, email templates, display advertising, and social campaigns.</p>
+            </div>
+            <div class="wrow-meta">
+                <span class="wrow-tag">Digital</span>
+                <span class="wrow-arrow">→</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     CAPABILITIES
+═══════════════════════════════════════════════ -->
+<section id="capabilities" class="section">
+    <div class="cap-layout">
+        <div class="cap-left">
+            <div class="s-label reveal">Capabilities</div>
+            <h2 class="s-headline reveal d1">A complete<br><em>/creative</em><br>toolkit.</h2>
+            <p class="cap-intro reveal d2">
+                27+ years of design practice and 20+ years of coding means
+                I can lead from concept to launch — strategy, visual design,
+                and front-end development under one roof.
+            </p>
+        </div>
+        <div class="cap-right">
+            <div class="cap-list">
+                <div class="cap-item reveal">
+                    <span class="cap-item-num">01</span>
+                    <div class="cap-item-body">
+                        <h3 class="cap-item-name">Problem Discovery</h3>
+                        <p class="cap-item-desc">Deep-dive research and stakeholder alignment to uncover the actual problem before jumping to solutions. Strategy before execution.</p>
+                    </div>
+                </div>
+                <div class="cap-item reveal">
+                    <span class="cap-item-num">02</span>
+                    <div class="cap-item-body">
+                        <h3 class="cap-item-name">Solution Design</h3>
+                        <p class="cap-item-desc">Translating insights into elegant visual and functional solutions — concept exploration through production-ready deliverables.</p>
+                    </div>
+                </div>
+                <div class="cap-item reveal">
+                    <span class="cap-item-num">03</span>
+                    <div class="cap-item-body">
+                        <h3 class="cap-item-name">Front-End Development</h3>
+                        <p class="cap-item-desc">20+ years writing clean HTML, CSS, and JavaScript. I design and build — bridging the gap between design intent and technical reality.</p>
+                    </div>
+                </div>
+                <div class="cap-item reveal">
+                    <span class="cap-item-num">04</span>
+                    <div class="cap-item-body">
+                        <h3 class="cap-item-name">AI Integration</h3>
+                        <p class="cap-item-desc">Leveraging generative AI and custom tooling to amplify creative output, streamline operations, and explore new design possibilities.</p>
+                    </div>
+                </div>
+                <div class="cap-item reveal">
+                    <span class="cap-item-num">05</span>
+                    <div class="cap-item-body">
+                        <h3 class="cap-item-name">Brand Systems</h3>
+                        <p class="cap-item-desc">Scalable, coherent brand architectures — guidelines, design systems, component libraries, and governance frameworks.</p>
+                    </div>
+                </div>
+                <div class="cap-item reveal">
+                    <span class="cap-item-num">06</span>
+                    <div class="cap-item-body">
+                        <h3 class="cap-item-name">Cross-Functional Leadership</h3>
+                        <p class="cap-item-desc">Aligning creative vision across marketing, product, engineering, and executive stakeholders. Making creative serve the business.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     ABOUT
+═══════════════════════════════════════════════ -->
+<section id="about" class="section">
+    <div class="s-label reveal">About</div>
+    <div class="about-layout">
+        <div class="about-left">
+            <h2 class="s-headline reveal">Designer,<br>builder,<br><em>/problem</em><br>solver.</h2>
+            <div class="about-stat-row reveal d2">
+                <div class="astat">
+                    <div class="astat-n">27+</div>
+                    <div class="astat-l">Years Design</div>
+                </div>
+                <div class="astat">
+                    <div class="astat-n">13+</div>
+                    <div class="astat-l">Yrs at Grainger</div>
+                </div>
+                <div class="astat">
+                    <div class="astat-n">20+</div>
+                    <div class="astat-l">Years Coding</div>
+                </div>
+                <div class="astat">
+                    <div class="astat-n">∞</div>
+                    <div class="astat-l">Ideas</div>
+                </div>
+            </div>
+        </div>
+        <div class="about-right reveal d1">
+            <h3>I'm a creative director who believes great work lives at the intersection of craft, strategy, and relentless curiosity.</h3>
+            <p>With 27+ years in design and 20+ years coding, I bring a rare combination of right-brain creativity and left-brain technical thinking to every engagement. I've spent the last 13+ years at Grainger leading creative for one of the world's largest B2B distributors.</p>
+            <p>I'm deeply invested in the intersection of design and AI — not as a replacement for human creativity, but as an amplifier. I've built custom tools, frameworks, and workflows that help teams do their best work faster and smarter.</p>
+            <p>When I'm not designing or coding, I'm exploring new AI models, shooting photography, or solving whatever problem happens to be most interesting that day.</p>
+
+            <p class="tools-label">Tools &amp; Technologies</p>
+            <div class="chips">
+                <span class="chip">Figma</span>
+                <span class="chip">Adobe CC</span>
+                <span class="chip">HTML/CSS</span>
+                <span class="chip">JavaScript</span>
+                <span class="chip">Midjourney</span>
+                <span class="chip">Claude AI</span>
+                <span class="chip">ChatGPT</span>
+                <span class="chip">Photoshop</span>
+                <span class="chip">Illustrator</span>
+                <span class="chip">InDesign</span>
+                <span class="chip">Notion</span>
+                <span class="chip">Sketch</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     EXPERIENCE
+═══════════════════════════════════════════════ -->
+<section id="experience" class="section">
+    <div class="s-label reveal">Experience</div>
+    <h2 class="s-headline reveal d1">The path that<br>brought me <em>/here.</em></h2>
+
+    <div class="exp-list">
+        <div class="exp-item reveal">
+            <div class="exp-meta">
+                <div class="exp-period">2011 — Present</div>
+                <div class="exp-badge"><span class="live"></span> Current</div>
+            </div>
+            <div class="exp-content">
+                <h3 class="exp-role">Principal Creative Director</h3>
+                <div class="exp-company">W.W. Grainger, Inc.</div>
+                <p class="exp-desc">Leading creative vision and strategy for one of the world's largest MRO distributors. Overseeing brand systems, digital campaigns, AI-powered design tools, and a high-performing creative team. Driving AI integration across all creative operations.</p>
+            </div>
+        </div>
+
+        <div class="exp-item reveal">
+            <div class="exp-meta">
+                <div class="exp-period">2008 — 2011</div>
+            </div>
+            <div class="exp-content">
+                <h3 class="exp-role">Senior Designer</h3>
+                <div class="exp-company">Leo Burnett</div>
+                <p class="exp-desc">Developed creative solutions for global brands across print, digital, and integrated campaigns in one of advertising's most storied environments.</p>
+            </div>
+        </div>
+
+        <div class="exp-item reveal">
+            <div class="exp-meta">
+                <div class="exp-period">2004 — 2008</div>
+            </div>
+            <div class="exp-content">
+                <h3 class="exp-role">Art Director</h3>
+                <div class="exp-company">Various Agencies</div>
+                <p class="exp-desc">Art direction and design across B2B and B2C sectors, building foundations in campaign concepting, brand development, and multi-channel production.</p>
+            </div>
+        </div>
+
+        <div class="exp-item reveal">
+            <div class="exp-meta">
+                <div class="exp-period">2001 — 2004</div>
+            </div>
+            <div class="exp-content">
+                <h3 class="exp-role">Graphic Designer</h3>
+                <div class="exp-company">Early Career</div>
+                <p class="exp-desc">Entry-level design roles spanning print production, web design, and brand identity — building the craft foundations that everything else stands on.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     CONTACT / CTA
+═══════════════════════════════════════════════ -->
+<section id="contact">
+    <div class="cta-label reveal">Let's Work Together</div>
+    <h2 class="cta-headline reveal d1">
+        Have a project<br>in <em>/mind?</em>
+    </h2>
+    <div class="cta-btns reveal d2">
+        <a href="mailto:ericmogie@gmail.com" class="btn-pill">
+            Send an email <span class="dot"></span>
+        </a>
+        <a href="https://www.linkedin.com/in/ericmogensen" target="_blank" rel="noopener noreferrer" class="btn-outline">
+            View LinkedIn →
+        </a>
+    </div>
+    <div class="cta-contact reveal d3">
+        <a href="mailto:ericmogie@gmail.com" class="clink">ericmogie@gmail.com</a>
+        <a href="tel:2242791031" class="clink">(224) 279-1031</a>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════ -->
+<footer>
+    <div class="footer-brand">Mogie</div>
+    <div class="footer-copy">© 2025 Eric Mogensen. All rights reserved.</div>
+    <nav class="footer-nav">
+        <a href="#work">Work</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="mailto:ericmogie@gmail.com">Contact</a>
+    </nav>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════ -->
+<script>
+    // ── Hamburger / fullscreen menu
+    const hamburger = document.getElementById('hamburger');
+    const overlay   = document.getElementById('menuOverlay');
+    let menuOpen = false;
+
+    hamburger.addEventListener('click', () => {
+        menuOpen = !menuOpen;
+        overlay.classList.toggle('open', menuOpen);
+        // Animate hamburger lines
+        const lines = hamburger.querySelectorAll('span');
+        if (menuOpen) {
+            lines[0].style.transform = 'translateY(3.5px) rotate(45deg)';
+            lines[1].style.transform = 'translateY(-3.5px) rotate(-45deg)';
+            lines[1].style.width = '100%';
+            lines[1].style.marginLeft = '0';
+        } else {
+            lines[0].style.transform = '';
+            lines[1].style.transform = '';
+            lines[1].style.width = '';
+            lines[1].style.marginLeft = '';
+        }
+    });
+
+    function closeMenu() {
+        menuOpen = false;
+        overlay.classList.remove('open');
+        const lines = hamburger.querySelectorAll('span');
+        lines[0].style.transform = '';
+        lines[1].style.transform = '';
+        lines[1].style.width = '';
+        lines[1].style.marginLeft = '';
+    }
+
+    // Close on escape
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && menuOpen) closeMenu();
+    });
+
+    // ── Nav scroll state
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ── Reveal on scroll
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('in');
+                io.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ── Smooth anchor scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+<!-- ═══════════════════════════════════════════════
+     DOWNLOAD BUTTON
+═══════════════════════════════════════════════ -->
+<style>
+    #dl-btn {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--white);
+        color: var(--black);
+        font-family: var(--ff-sans);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        padding: 13px 24px;
+        border-radius: 100px;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+        transition: transform 0.2s var(--ease), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    #dl-btn:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.7), 0 4px 12px rgba(0,0,0,0.4);
+        background: var(--white-2);
+    }
+    #dl-btn:active { transform: scale(0.97); }
+    #dl-btn svg {
+        width: 14px; height: 14px;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+    }
+    #dl-btn:hover svg { transform: translateY(2px); }
+</style>
+
+<button id="dl-btn" title="Download this page as HTML">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 2v8M5 7l3 3 3-3"></path>
+        <path d="M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1"></path>
+    </svg>
+    Download HTML
+</button>
+
+<script>
+    document.getElementById('dl-btn').addEventListener('click', () => {
+        const html = document.documentElement.outerHTML;
+        const blob = new Blob(['<!DOCTYPE html>\n' + html], { type: 'text/html;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = 'eric-mogensen-portfolio.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+</script>
+
+
+
+</body></html>
