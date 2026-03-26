@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Scrollwise – Transform Your Scroll Into Growth</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    :root {
+      --bg-dark: #0a0e14;
+      --bg-card: #141920;
+      --bg-elevated: #1a1f2e;
+      --accent: #00d4aa;
+      --accent-2: #0099ff;
+      --text: #ffffff;
+      --text-secondary: #a0aec0;
+      --text-tertiary: #718096;
+      --border: rgba(255,255,255,0.08);
+      --gradient: linear-gradient(135deg, #00d4aa 0%, #0099ff 100%);
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      position: fixed;
+    }
+    
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #0f1419, #0a0e14);
+    }
+    
+    .header {
+      padding: max(env(safe-area-inset-top), 12px) 20px 12px;
+      background: rgba(10,14,20,0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 30px rgba(0,212,170,0.3);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .brand-info h1 {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2px;
+    }
+    
+    .brand-info p {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    
+    .stats {
+      padding: 8px 14px;
+      background: rgba(0,212,170,0.12);
+      border: 1px solid rgba(0,212,170,0.3);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    
+    .nav {
+      padding: 12px 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      gap: 10px;
+      scrollbar-width: none;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    
+    .nav::-webkit-scrollbar { display: none; }
+    
+    .pill {
+      flex-shrink: 0;
+      padding: 10px 18px;
+      border-radius: 100px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      outline: none;
+    }
+    
+    .pill.active {
+      background: var(--gradient);
+      color: var(--bg-dark);
+      border-color: transparent;
+      box-shadow: 0 0 30px rgba(0,212,170,0.3);
+      transform: scale(1.05);
+    }
+    
+    .pill:active {
+      transform: scale(0.98);
+    }
+    
+    .viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      padding: 16px 16px 100px;
+    }
+    
+    .stack {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-height: 760px;
+    }
+    
+    .card {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-card);
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      pointer-events: none;
+    }
+    
+    .card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+      pointer-events: auto;
+    }
+    
+    .card.next {
+      opacity: 0.4;
+      transform: translateY(20px) scale(0.97);
+      z-index: 5;
+    }
+    
+    .card.exit {
+      opacity: 0;
+      transform: translateY(-50px) scale(0.9);
+      z-index: 15;
+    }
+    
+    .card-header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    
+    .badge {
+      padding: 6px 12px;
+      background: rgba(0,212,170,0.15);
+      border: 1px solid rgba(0,212,170,0.4);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    
+    .time {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    
+    .media {
+      width: calc(100% - 40px);
+      height: 280px;
+      margin: 0 20px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--bg-elevated), var(--bg-card));
+    }
+    
+    .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.9) saturate(1.1);
+    }
+    
+    .media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(10,14,20,0.7) 100%);
+    }
+    
+    .media-label {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      padding: 6px 12px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      z-index: 1;
+    }
+    
+    .content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    
+    .content::-webkit-scrollbar { width: 4px; }
+    .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    
+    .points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    
+    .points li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gradient);
+      margin-top: 9px;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(0,212,170,0.5);
+    }
+    
+    .points span {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    
+    .takeaway {
+      padding: 16px;
+      background: rgba(0,212,170,0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      margin-top: auto;
+    }
+    
+    .takeaway strong {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .takeaway p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    
+    .footer {
+      padding: 0 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .btn {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      outline: none;
+    }
+    
+    .btn-primary {
+      flex: 1;
+      padding: 16px 24px;
+      background: var(--gradient);
+      border-radius: 100px;
+      font-size: 16px;
+      color: var(--bg-dark);
+      box-shadow: 0 8px 20px rgba(0,212,170,0.3);
+    }
+    
+    .btn-primary:active { transform: scale(0.96); }
+    
+    .btn-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      font-size: 24px;
+      color: var(--text-secondary);
+    }
+    
+    .btn-icon:active { transform: scale(0.9); }
+    
+    .btn-icon.saved {
+      background: rgba(0,212,170,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .progress-bar {
+      flex: 1;
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 100px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient);
+      border-radius: 100px;
+      transition: width 0.5s;
+      box-shadow: 0 0 10px rgba(0,212,170,0.5);
+    }
+    
+    .progress-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .hint {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 20px;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      pointer-events: none;
+      z-index: 50;
+      animation: bounce 2.5s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-10px); }
+    }
+    
+    .empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+      height: 100%;
+    }
+    
+    .empty-icon { font-size: 80px; opacity: 0.3; margin-bottom: 20px; }
+    .empty h3 { font-size: 24px; margin-bottom: 12px; }
+    .empty p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 300px; }
+    
+    @media (max-width: 480px) {
+      .app { max-width: 100%; }
+      .media { height: 240px; }
+      .title { font-size: 24px; }
+      .subtitle { font-size: 15px; }
+      .points span { font-size: 15px; }
+    }
+    
+    @media (min-height: 800px) {
+      .media { height: 320px; }
+    }
+    
+    @media (max-height: 700px) {
+      .media { height: 200px; }
+      .title { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="logo">🧠</div>
+        <div class="brand-info">
+          <h1>Scrollwise</h1>
+          <p>Learn While You Scroll</p>
+        </div>
+      </div>
+      <div class="stats">
+        <span id="statsText">🔥 Day 1</span>
+      </div>
+    </header>
+    
+    <nav class="nav" id="navBar"></nav>
+    
+    <main class="viewport">
+      <div class="stack" id="cardStack"></div>
+      <div class="hint">👆 Swipe up for next lesson</div>
+    </main>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+      
+      // Error handling
+      window.addEventListener('error', function(e) {
+        console.error('Error caught:', e.message, e.filename, e.lineno);
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Promise rejection:', e.reason);
+      });
+      
+      // Data
+      var CATEGORIES = [
+        {id: 'ai', name: 'AI & Tech', icon: '🤖'},
+        {id: 'productivity', name: 'Productivity', icon: '⚡'},
+        {id: 'finance', name: 'Finance', icon: '💰'},
+        {id: 'health', name: 'Health', icon: '💪'},
+        {id: 'psychology', name: 'Psychology', icon: '🧠'},
+        {id: 'career', name: 'Career', icon: '📈'},
+        {id: 'communication', name: 'Communication', icon: '💬'},
+        {id: 'creativity', name: 'Creativity', icon: '🎨'},
+        {id: 'science', name: 'Science', icon: '🔬'},
+        {id: 'learning', name: 'Learning', icon: '📚'},
+        {id: 'bookmarks', name: 'Saved', icon: '⭐'}
+      ];
+      
+      var LESSONS = {
+        ai: [
+          {
+            id: 'ai1',
+            title: 'What Is AI, Really?',
+            subtitle: 'A simple mental model that makes sense',
+            points: [
+              'AI learns patterns from massive datasets, like studying billions of examples',
+              'It predicts what comes next based on patterns—not by understanding',
+              'Think of AI as a fast pattern matcher, not a thinking machine',
+              'More training data = better predictions'
+            ],
+            duration: '1 min',
+            tag: 'Foundation',
+            image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80',
+            takeaway: 'AI is pattern recognition at scale—powerful for repetitive tasks, limited for genuine creativity.'
+          },
+          {
+            id: 'ai2',
+            title: 'Master Prompt Engineering',
+            subtitle: 'Write prompts that get results',
+            points: [
+              'Define the role: "You are a senior marketing strategist"',
+              'Specify the task: "Write a product launch email for executives"',
+              'Set constraints: "Under 150 words, professional tone, one CTA"',
+              'Provide examples of what good looks like'
+            ],
+            duration: '90 sec',
+            tag: 'Skill',
+            image: 'https://images.unsplash.com/photo-1676573409165-6c43d2f887cf?w=800&q=80',
+            takeaway: 'Better prompts = better outputs. Be specific, add context, show examples.'
+          },
+          {
+            id: 'ai3',
+            title: 'AI Limitations You Must Know',
+            subtitle: 'What humans still do better',
+            points: [
+              'Judgment with incomplete information—AI needs clear patterns',
+              'Deep empathy in high-stakes conversations',
+              'Original breakthroughs combining unrelated domains',
+              'Ethical reasoning in gray areas'
+            ],
+            duration: '1 min',
+            tag: 'Reality',
+            image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80',
+            takeaway: 'AI excels at scale and speed. Humans excel at ambiguity and empathy.'
+          },
+          {
+            id: 'ai4',
+            title: 'Practical AI Tools',
+            subtitle: 'Start using these today',
+            points: [
+              'Meeting transcription: Otter.ai captures calls in seconds',
+              'Writing polish: Grammarly for grammar, Claude for ideation',
+              'Research synthesis: AI compares sources and finds themes',
+              'Code assistance: GitHub Copilot suggests as you type'
+            ],
+            duration: '1 min',
+            tag: 'Tools',
+            image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80',
+            takeaway: 'Integrate AI incrementally. Start with low-stakes tasks to build confidence.'
+          }
+        ],
+        
+        productivity: [
+          {
+            id: 'prod1',
+            title: 'The Two-Minute Rule',
+            subtitle: 'Stop procrastinating on tiny tasks',
+            points: [
+              'If a task takes under 2 minutes, do it immediately—no exceptions',
+              'Tiny tasks pile up mentally and drain more energy than doing them',
+              'This clears mental clutter and creates momentum for larger work',
+              'Batch larger tasks into blocks, kill micro-tasks instantly'
+            ],
+            duration: '1 min',
+            tag: 'Core Habit',
+            image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=80',
+            takeaway: 'Quick tasks drain energy when delayed. Complete them immediately.'
+          },
+          {
+            id: 'prod2',
+            title: 'Time Blocking That Works',
+            subtitle: 'Protect your focus',
+            points: [
+              'Block 90-minute chunks for deep work—matches natural rhythms',
+              'Protect blocks like meetings: "I am booked 9-10:30am"',
+              'Schedule buffer time between blocks for transitions',
+              'Color-code: green for deep work, yellow for meetings, red for admin'
+            ],
+            duration: '90 sec',
+            tag: 'System',
+            image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&q=80',
+            takeaway: 'Your calendar should reflect priorities. Schedule deep work first.'
+          },
+          {
+            id: 'prod3',
+            title: 'The Eisenhower Matrix',
+            subtitle: 'Prioritize like a president',
+            points: [
+              'Urgent + Important: Do now (crisis mode, handle immediately)',
+              'Important + Not Urgent: Schedule these (create long-term value)',
+              'Urgent + Not Important: Delegate or decline (time traps)',
+              'Not Urgent + Not Important: Delete ruthlessly'
+            ],
+            duration: '90 sec',
+            tag: 'Framework',
+            image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
+            takeaway: 'Winners schedule Important work before it becomes Urgent.'
+          },
+          {
+            id: 'prod4',
+            title: 'Energy > Time Management',
+            subtitle: 'Work with your biology',
+            points: [
+              'Track your energy peaks—most people have 2-3 hours of peak focus daily',
+              'Schedule hard thinking during peak times, admin during low-energy windows',
+              'Sleep, movement, and nutrition determine energy availability',
+              'Tired you is half as productive regardless of time available'
+            ],
+            duration: '90 sec',
+            tag: 'Principle',
+            image: 'https://images.unsplash.com/photo-1499728603263-13726abce5fd?w=800&q=80',
+            takeaway: 'Align hardest work with peak energy, not arbitrary times.'
+          }
+        ],
+        
+        finance: [
+          {
+            id: 'fin1',
+            title: 'Pay Yourself First',
+            subtitle: 'The only wealth rule that matters',
+            points: [
+              'Save 20% of income before spending—automate transfers on payday',
+              'Treat savings like rent: non-negotiable, due immediately',
+              'Lifestyle expands to fill available cash, so reduce available cash',
+              'This one habit creates wealth regardless of income level'
+            ],
+            duration: '1 min',
+            tag: 'Golden Rule',
+            image: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80',
+            takeaway: 'You cannot spend what you do not see. Automate savings first.'
+          },
+          {
+            id: 'fin2',
+            title: 'The 4% Rule',
+            subtitle: 'How much to retire',
+            points: [
+              'Withdraw 4% of portfolio annually and probably never run out',
+              'To retire, save 25x annual expenses: $40k per year = $1M needed',
+              'Assumes diversified index funds and inflation adjustments',
+              'Based on historical market returns over 30-year periods'
+            ],
+            duration: '90 sec',
+            tag: 'Retirement',
+            image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80',
+            takeaway: 'Financial independence = 25x annual expenses invested.'
+          },
+          {
+            id: 'fin3',
+            title: 'Index Funds vs Stock Picking',
+            subtitle: 'Why boring wins',
+            points: [
+              'Index funds own entire market—you win when economy grows',
+              'Stock picking requires beating PhDs with supercomputers',
+              '90% of active managers underperform index funds over 15 years',
+              'Lower fees (0.05% vs 1%) save thousands over decades'
+            ],
+            duration: '90 sec',
+            tag: 'Investing',
+            image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
+            takeaway: 'Own the whole market cheaply instead of trying to beat it.'
+          },
+          {
+            id: 'fin4',
+            title: 'Compound Interest Magic',
+            subtitle: 'Time is the secret ingredient',
+            points: [
+              '$100 per month at 8% for 30 years = $150k ($114k is growth)',
+              'Starting 10 years earlier beats doubling contributions later',
+              'Every year delayed costs exponentially in lost compounding',
+              'Small consistent investments beat large sporadic ones'
+            ],
+            duration: '90 sec',
+            tag: 'Math',
+            image: 'https://images.unsplash.com/photo-1579621970795-87facc2f976d?w=800&q=80',
+            takeaway: 'Start immediately, even tiny amounts. Time multiplies money exponentially.'
+          }
+        ],
+        
+        health: [
+          {
+            id: 'health1',
+            title: 'Protein Is the Secret',
+            subtitle: 'Why most under-eat it',
+            points: [
+              'Target 0.8-1g per pound of body weight for muscle and satiety',
+              '30g protein at breakfast reduces cravings all day—game changer',
+              'Preserves muscle during weight loss better than other macros',
+              'Highest thermic effect—you burn 25-30% of calories digesting it'
+            ],
+            duration: '90 sec',
+            tag: 'Nutrition',
+            image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80',
+            takeaway: 'Prioritize protein at every meal for satiety and muscle health.'
+          },
+          {
+            id: 'health2',
+            title: 'Walk More',
+            subtitle: '10,000 steps is not arbitrary',
+            points: [
+              '7,000+ steps daily reduces all-cause mortality by 50-70%',
+              'Low-impact, free, and stackable with calls or podcasts',
+              'Walking after meals stabilizes blood sugar better than sitting',
+              'Builds baseline fitness without injury risk or recovery time'
+            ],
+            duration: '1 min',
+            tag: 'Movement',
+            image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&q=80',
+            takeaway: 'Walking costs nothing and prevents nearly everything.'
+          },
+          {
+            id: 'health3',
+            title: 'Sleep Is Non-Negotiable',
+            subtitle: 'Everything depends on this',
+            points: [
+              '7-9 hours nightly: less increases disease risk, cognitive decline, weight gain',
+              'Consistent wake time matters more than bedtime—trains circadian rhythm',
+              'Cool room (65-68°F), dark environment, no screens 1 hour before bed',
+              'Sleep deprivation impairs you like being legally drunk'
+            ],
+            duration: '90 sec',
+            tag: 'Foundation',
+            image: 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=800&q=80',
+            takeaway: 'Sleep is when your body repairs. Skimp on it and everything suffers.'
+          },
+          {
+            id: 'health4',
+            title: 'Strength Train 2x Per Week',
+            subtitle: 'Minimum effective dose',
+            points: [
+              '2x weekly full-body workouts preserve muscle, bone density, metabolism',
+              'No gym needed: bodyweight exercises work if progressive',
+              'More muscle = higher resting calorie burn (metabolic advantage)',
+              'Prevents age-related muscle loss (sarcopenia) starting at age 30'
+            ],
+            duration: '1 min',
+            tag: 'Exercise',
+            image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80',
+            takeaway: 'Twice weekly strength training maintains muscle as you age.'
+          }
+        ],
+        
+        psychology: [
+          {
+            id: 'psych1',
+            title: 'The Zeigarnik Effect',
+            subtitle: 'Why unfinished tasks haunt you',
+            points: [
+              'Your brain obsesses over incomplete tasks more than completed ones',
+              'Open loops create mental tension that drains cognitive resources',
+              'To stop ruminating: write it down with next action or schedule it',
+              'To-do lists reduce anxiety by externalizing and closing mental loops'
+            ],
+            duration: '90 sec',
+            tag: 'Cognitive',
+            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+            takeaway: 'Write incomplete tasks down to free mental RAM for actual thinking.'
+          },
+          {
+            id: 'psych2',
+            title: 'Confirmation Bias',
+            subtitle: 'We see what we expect',
+            points: [
+              'You unconsciously seek info confirming beliefs, ignore contradictions',
+              'This is why political debates rarely change minds—we filter evidence',
+              'Counter it: actively seek disconfirming evidence before deciding',
+              'Ask yourself: "What would prove me wrong?" not "What proves me right?"'
+            ],
+            duration: '90 sec',
+            tag: 'Bias',
+            image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+            takeaway: 'Your brain filters reality to confirm beliefs. Seek contradicting evidence.'
+          },
+          {
+            id: 'psych3',
+            title: 'Loss Aversion',
+            subtitle: 'Losing feels worse than winning',
+            points: [
+              'Losing $100 feels twice as bad as gaining $100 feels good',
+              'This keeps us in bad jobs, relationships, investments too long (sunk cost)',
+              'Reframe the question: "Would I choose this situation if starting fresh?"',
+              'Avoiding losses mattered more evolutionarily than seeking gains'
+            ],
+            duration: '90 sec',
+            tag: 'Behavioral',
+            image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80',
+            takeaway: 'Fear of losing clouds judgment. Ask if you would choose it from scratch.'
+          },
+          {
+            id: 'psych4',
+            title: 'Growth vs Fixed Mindset',
+            subtitle: 'Carol Dweck breakthrough',
+            points: [
+              'Fixed mindset: "I am bad at math." Growth: "I have not learned this yet."',
+              'Believing talent is fixed makes you avoid challenges to protect ego',
+              'Growth mindset increases resilience, learning speed, and long-term success',
+              'Praise effort and strategy, not innate ability, to develop growth mindset'
+            ],
+            duration: '90 sec',
+            tag: 'Learning',
+            image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80',
+            takeaway: 'Ability is not fixed. Believing in growth makes you embrace challenges.'
+          }
+        ],
+        
+        career: [
+          {
+            id: 'career1',
+            title: 'The 70/20/10 Rule',
+            subtitle: 'How top performers allocate time',
+            points: [
+              '70% on core role: deliver exceptional results in primary responsibilities',
+              '20% on adjacent skills: learn tools and knowledge that multiply impact',
+              '10% on bets: explore new areas, build relationships, experiment',
+              'This balance ensures excellence today while building for tomorrow'
+            ],
+            duration: '90 sec',
+            tag: 'Strategy',
+            image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80',
+            takeaway: 'Allocate most energy to core work, but reserve time for growth.'
+          },
+          {
+            id: 'career2',
+            title: 'Negotiate Everything',
+            subtitle: 'Phrases that work',
+            points: [
+              '"Can you help me understand how you arrived at that number?"',
+              '"If I deliver X by Y date, can we revisit compensation in Z months?"',
+              '"What would make this a clear yes on your side?" (reveals constraints)',
+              'Never accept first offer—most organizations expect negotiation'
+            ],
+            duration: '90 sec',
+            tag: 'Negotiation',
+            image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80',
+            takeaway: 'One negotiation can be worth years of raises. Always ask—worst is no.'
+          },
+          {
+            id: 'career3',
+            title: 'Build a Brag Document',
+            subtitle: 'Track wins in real-time',
+            points: [
+              'Weekly: log accomplishments, metrics, and positive feedback in a doc',
+              'You will forget 90% of your wins by review time—this doc is memory',
+              'Use it for performance reviews, resume updates, salary negotiations',
+              'Include context: problem you faced, your solution, measurable impact'
+            ],
+            duration: '90 sec',
+            tag: 'Tool',
+            image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80',
+            takeaway: 'Memory fades. Document wins weekly for effortless performance reviews.'
+          },
+          {
+            id: 'career4',
+            title: 'Visibility = Opportunity',
+            subtitle: 'How to get noticed',
+            points: [
+              'Share work publicly: write docs, present at meetings, contribute knowledge',
+              'Your manager\'s job is making you visible to their manager—help them',
+              'Silent excellence gets you nowhere: ship work, then tell the story',
+              'Visibility is not bragging—it is ensuring your work gets proper credit'
+            ],
+            duration: '90 sec',
+            tag: 'Advancement',
+            image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80',
+            takeaway: 'Make your impact visible to decision-makers who control opportunities.'
+          }
+        ],
+        
+        communication: [
+          {
+            id: 'comm1',
+            title: 'The Pyramid Principle',
+            subtitle: 'How consultants structure ideas',
+            points: [
+              'Start with the answer (conclusion), then support with 3 key reasons',
+              'Each reason gets supporting details below it—forms pyramid structure',
+              'Respects attention spans: busy people get value in 10 seconds',
+              'Most people build up to conclusion, losing busy readers early'
+            ],
+            duration: '90 sec',
+            tag: 'Framework',
+            image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
+            takeaway: 'Lead with conclusion. Let busy people decide if they need details.'
+          },
+          {
+            id: 'comm2',
+            title: 'Write Like You Talk',
+            subtitle: 'Clarity beats cleverness',
+            points: [
+              'Read drafts aloud—if you would not say it, do not write it',
+              'Cut jargon: "utilize" becomes "use", "optimize" becomes "improve"',
+              'Concrete beats abstract: "revenue up 20%" not "improved performance"',
+              'Active voice beats passive: "We launched" not "It was launched"'
+            ],
+            duration: '90 sec',
+            tag: 'Writing',
+            image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80',
+            takeaway: 'Simple, direct language communicates better than impressive jargon.'
+          },
+          {
+            id: 'comm3',
+            title: 'The Power of Pausing',
+            subtitle: 'Silence is a tool',
+            points: [
+              'After asking a question, wait 3 seconds before adding more—people need think time',
+              'Silence creates social pressure to speak, drawing out honesty and depth',
+              'Top negotiators use pauses to let the other side fill void with concessions',
+              'Most people are uncomfortable with silence and rush to fill it—resist this'
+            ],
+            duration: '90 sec',
+            tag: 'Speaking',
+            image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80',
+            takeaway: 'Silence after questions gives people space to think and reveal what they mean.'
+          },
+          {
+            id: 'comm4',
+            title: 'Active Listening Formula',
+            subtitle: 'Be interesting by being interested',
+            points: [
+              'Repeat key words back: "So you are saying X is the main issue?"',
+              'Ask follow-up questions: "What made you decide that?" (shows curiosity)',
+              'Resist interrupting with your own story—listen until they finish',
+              'Summarize before responding: "Let me make sure I understand..."'
+            ],
+            duration: '90 sec',
+            tag: 'Conversation',
+            image: 'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=800&q=80',
+            takeaway: 'People love being truly heard. Reflect, ask follow-ups, resist interjecting.'
+          }
+        ],
+        
+        creativity: [
+          {
+            id: 'create1',
+            title: 'Creativity Is Connecting',
+            subtitle: 'Steve Jobs was right',
+            points: [
+              'Original ideas are just old ideas recombined in new unexpected ways',
+              'Consume widely across unrelated domains—best ideas come from intersections',
+              'Keep a "spark file" of interesting ideas, quotes, images to remix later',
+              'More dots you collect (experiences, knowledge) = more possible connections'
+            ],
+            duration: '90 sec',
+            tag: 'Philosophy',
+            image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800&q=80',
+            takeaway: 'Creativity is not magic—it is connecting existing ideas in unexpected ways.'
+          },
+          {
+            id: 'create2',
+            title: 'Morning Pages',
+            subtitle: 'Julia Cameron magic trick',
+            points: [
+              'Write 3 pages longhand every morning before doing anything else',
+              'Stream of consciousness—do not edit, do not think, just write',
+              'This clears mental clutter and surfaces ideas buried under daily noise',
+              'Not about quality—it is about clearing the channel for creativity'
+            ],
+            duration: '90 sec',
+            tag: 'Practice',
+            image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80',
+            takeaway: 'Morning pages clear mental RAM and surface ideas you did not know you had.'
+          },
+          {
+            id: 'create3',
+            title: 'Constraints Boost Creativity',
+            subtitle: 'Freedom is paralyzing',
+            points: [
+              'Limits force resourcefulness: "Design a logo using only 3 colors and circles"',
+              'Twitter 280-character limit created entirely new writing styles',
+              'Set your own constraints: 1 hour, 500 words, 5 colors, 10 ingredients',
+              'Unlimited options trigger analysis paralysis—constraints enable action'
+            ],
+            duration: '90 sec',
+            tag: 'Technique',
+            image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+            takeaway: 'Constraints channel creativity productively. Unlimited freedom often produces nothing.'
+          },
+          {
+            id: 'create4',
+            title: 'Quantity Leads to Quality',
+            subtitle: 'The pottery class study',
+            points: [
+              'One group graded on one perfect pot, another on 50 pounds of pots',
+              'The quantity group made objectively better pots—learned through iteration',
+              'Ship daily, fail fast, and improve through volume and feedback loops',
+              'Perfectionists produce less and learn slower than prolific creators'
+            ],
+            duration: '90 sec',
+            tag: 'Research',
+            image: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800&q=80',
+            takeaway: 'Make more, perfect less. Volume creates skill faster than pursuing perfection.'
+          }
+        ],
+        
+        science: [
+          {
+            id: 'sci1',
+            title: 'The Placebo Effect',
+            subtitle: 'Your mind heals your body',
+            points: [
+              'Sugar pills reduce pain by 30% in clinical trials—belief alone triggers biochemistry',
+              'Expensive placebos work better than cheap ones (perception matters)',
+              'Brain scans show real measurable changes in pain processing regions',
+              'This is not "fake"—it is your mind activating real healing mechanisms'
+            ],
+            duration: '90 sec',
+            tag: 'Medicine',
+            image: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&q=80',
+            takeaway: 'Belief triggers measurable biological changes. Mind-body connection is scientifically real.'
+          },
+          {
+            id: 'sci2',
+            title: 'Why the Sky Is Blue',
+            subtitle: 'Rayleigh scattering explained',
+            points: [
+              'Sunlight is white light containing all colors combined together',
+              'Air molecules scatter blue wavelengths more than red wavelengths',
+              'Blue light bounces in all directions, filling the sky—that is what you see',
+              'Sunsets are red because blue light scattered away during long atmospheric path'
+            ],
+            duration: '1 min',
+            tag: 'Physics',
+            image: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80',
+            takeaway: 'Sky is blue because air scatters short blue wavelengths more than long red ones.'
+          },
+          {
+            id: 'sci3',
+            title: 'CRISPR Gene Editing',
+            subtitle: 'The future of medicine',
+            points: [
+              'CRISPR cuts DNA at precise locations to fix disease-causing genetic errors',
+              'Already cured sickle cell anemia in clinical trial patients—life-changing',
+              'Potential to eliminate many genetic diseases before birth',
+              'Ethical debates: curing disease vs creating designer babies—where is the line?'
+            ],
+            duration: '90 sec',
+            tag: 'Biology',
+            image: 'https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=800&q=80',
+            takeaway: 'CRISPR edits genes like software. Revolutionary medicine with profound ethical questions.'
+          },
+          {
+            id: 'sci4',
+            title: 'The Microbiome Revolution',
+            subtitle: 'Your gut controls more than digestion',
+            points: [
+              '100 trillion bacteria in your gut outnumber your human cells by 10 to 1',
+              'They produce neurotransmitters (serotonin, dopamine) affecting mood and cognition',
+              'Diet directly alters microbiome composition within just a few days',
+              'Gut-brain axis: your second brain communicates directly with your first brain'
+            ],
+            duration: '90 sec',
+            tag: 'Biology',
+            image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80',
+            takeaway: 'Gut bacteria influence mood, immunity, and weight. Feed them well with fiber.'
+          }
+        ],
+        
+        learning: [
+          {
+            id: 'learn1',
+            title: 'The Feynman Technique',
+            subtitle: 'Learn anything deeply',
+            points: [
+              'Step 1: Choose a concept and explain it simply, as if teaching a child',
+              'Step 2: Identify gaps where your explanation breaks down—those are knowledge gaps',
+              'Step 3: Go back to source material and study gaps until perfectly clear',
+              'Step 4: Simplify explanation further, use analogies, remove all jargon'
+            ],
+            duration: '90 sec',
+            tag: 'Method',
+            image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80',
+            takeaway: 'If you cannot explain it simply, you do not understand it. Teaching forces clarity.'
+          },
+          {
+            id: 'learn2',
+            title: 'Spaced Repetition',
+            subtitle: 'Science of retention',
+            points: [
+              'Review material at increasing intervals: 1 day, 3 days, 7 days, 14 days, 30 days',
+              'This matches the forgetting curve—review just before you would forget',
+              'Apps like Anki automate this—show you cards right when memory fades',
+              'Far more efficient than cramming—same retention with 10x less total time'
+            ],
+            duration: '90 sec',
+            tag: 'System',
+            image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+            takeaway: 'Timing reviews to match forgetting curve makes learning stick with minimal effort.'
+          },
+          {
+            id: 'learn3',
+            title: 'Active Recall',
+            subtitle: 'Stop highlighting, start testing',
+            points: [
+              'Retrieving information from memory strengthens it far better than re-reading',
+              'Test yourself constantly: flashcards, practice problems, explaining aloud',
+              'Highlighting and re-reading create illusion of learning—recognition is not recall',
+              'Difficult retrieval builds stronger memories—struggle is the point'
+            ],
+            duration: '90 sec',
+            tag: 'Technique',
+            image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80',
+            takeaway: 'Testing yourself is learning. Re-reading feels productive but barely works.'
+          },
+          {
+            id: 'learn4',
+            title: 'The 80/20 of Learning',
+            subtitle: 'Focus on high-leverage concepts',
+            points: [
+              '20% of concepts explain 80% of a field—identify and master core principles',
+              'Learn fundamentals deeply before advanced topics—strong foundation enables speed',
+              'Example: 300 words cover 65% of English usage—master those first',
+              'Do not get distracted by edge cases until you own the core concepts'
+            ],
+            duration: '90 sec',
+            tag: 'Efficiency',
+            image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80',
+            takeaway: 'Master the vital few concepts that unlock the field before chasing trivial many.'
+          }
+        ]
+      };
+      
+      // State management
+      var STORAGE_KEY = 'scrollwise_v5';
+      
+      var appState = {
+        currentCategory: 'ai',
+        lessonIndices: {},
+        bookmarkedIds: [],
+        totalViewed: 0,
+        streakDays: 1
+      };
+      
+      function saveState() {
+        try {
+          var data = {
+            currentCategory: appState.currentCategory,
+            lessonIndices: appState.lessonIndices,
+            bookmarkedIds: appState.bookmarkedIds,
+            totalViewed: appState.totalViewed,
+            streakDays: appState.streakDays
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+          console.error('Failed to save state:', e);
+        }
+      }
+      
+      function loadState() {
+        try {
+          var savedData = localStorage.getItem(STORAGE_KEY);
+          if (savedData) {
+            var parsed = JSON.parse(savedData);
+            appState.currentCategory = parsed.currentCategory || 'ai';
+            appState.lessonIndices = parsed.lessonIndices || {};
+            appState.bookmarkedIds = parsed.bookmarkedIds || [];
+            appState.totalViewed = parsed.totalViewed || 0;
+            appState.streakDays = parsed.streakDays || 1;
+          }
+        } catch (e) {
+          console.error('Failed to load state:', e);
+        }
+      }
+      
+      function getCurrentIndex() {
+        return appState.lessonIndices[appState.currentCategory] || 0;
+      }
+      
+      function setCurrentIndex(newIndex) {
+        appState.lessonIndices[appState.currentCategory] = newIndex;
+        saveState();
+      }
+      
+      function getLessonsForCategory(categoryId) {
+        if (categoryId === 'bookmarks') {
+          var bookmarked = [];
+          for (var catKey in LESSONS) {
+            if (LESSONS.hasOwnProperty(catKey)) {
+              var lessons = LESSONS[catKey];
+              for (var i = 0; i < lessons.length; i++) {
+                if (appState.bookmarkedIds.indexOf(lessons[i].id) !== -1) {
+                  bookmarked.push(lessons[i]);
+                }
+              }
+            }
+          }
+          
+          if (bookmarked.length === 0) {
+            return [{
+              id: 'empty',
+              title: 'No Saved Lessons Yet',
+              subtitle: 'Tap the bookmark icon to save lessons here',
+              points: [
+                'Bookmarks save locally on your device',
+                'No account required—everything stays private',
+                'Build your personal knowledge library'
+              ],
+              duration: '30 sec',
+              tag: 'Get Started',
+              image: 'https://images.unsplash.com/photo-1516534775068-ba3e7458af70?w=800&q=80',
+              takeaway: 'Start bookmarking lessons you want to review later.'
+            }];
+          }
+          return bookmarked;
+        }
+        
+        return LESSONS[categoryId] || [];
+      }
+      
+      function isBookmarked(lessonId) {
+        return appState.bookmarkedIds.indexOf(lessonId) !== -1;
+      }
+      
+      function toggleBookmark(lessonId) {
+        var index = appState.bookmarkedIds.indexOf(lessonId);
+        if (index === -1) {
+          appState.bookmarkedIds.push(lessonId);
+        } else {
+          appState.bookmarkedIds.splice(index, 1);
+        }
+        saveState();
+      }
+      
+      // Rendering functions
+      function renderNav() {
+        var navBar = document.getElementById('navBar');
+        if (!navBar) return;
+        
+        var html = '';
+        for (var i = 0; i < CATEGORIES.length; i++) {
+          var cat = CATEGORIES[i];
+          var activeClass = cat.id === appState.currentCategory ? ' active' : '';
+          html += '<button class="pill' + activeClass + '" data-category="' + cat.id + '">';
+          html += '<span>' + cat.icon + '</span>';
+          html += '<span>' + cat.name + '</span>';
+          html += '</button>';
+        }
+        navBar.innerHTML = html;
+        
+        var pills = navBar.querySelectorAll('.pill');
+        for (var j = 0; j < pills.length; j++) {
+          pills[j].addEventListener('click', handleCategoryClick);
+        }
+      }
+      
+      function handleCategoryClick(e) {
+        var categoryId = this.getAttribute('data-category');
+        if (categoryId && categoryId !== appState.currentCategory) {
+          appState.currentCategory = categoryId;
+          saveState();
+          renderNav();
+          renderCards();
+        }
+      }
+      
+      function renderCards() {
+        var stack = document.getElementById('cardStack');
+        if (!stack) return;
+        
+        var lessons = getLessonsForCategory(appState.currentCategory);
+        
+        if (lessons.length === 0) {
+          stack.innerHTML = '<div class="empty"><div class="empty-icon">📚</div><h3>No lessons</h3><p>Check back soon!</p></div>';
+          return;
+        }
+        
+        var currentIdx = getCurrentIndex() % lessons.length;
+        var nextIdx = (currentIdx + 1) % lessons.length;
+        
+        var currentLesson = lessons[currentIdx];
+        var nextLesson = lessons[nextIdx];
+        
+        stack.innerHTML = '';
+        
+        if (nextLesson && nextLesson.id !== currentLesson.id) {
+          stack.appendChild(createCard(nextLesson, 'next', lessons.length, nextIdx));
+        }
+        
+        stack.appendChild(createCard(currentLesson, 'active', lessons.length, currentIdx));
+      }
+      
+      function createCard(lesson, cardClass, totalLessons, currentIndex) {
+        var card = document.createElement('div');
+        card.className = 'card ' + cardClass;
+        
+        var saved = isBookmarked(lesson.id);
+        var progressPercent = Math.round(((currentIndex + 1) / totalLessons) * 100);
+        
+        var pointsHtml = '';
+        for (var i = 0; i < lesson.points.length; i++) {
+          pointsHtml += '<li><div class="dot"></div><span>' + escapeHtml(lesson.points[i]) + '</span></li>';
+        }
+        
+        var takeawayHtml = '';
+        if (lesson.takeaway) {
+          takeawayHtml = '<div class="takeaway"><strong>Key Takeaway</strong><p>' + escapeHtml(lesson.takeaway) + '</p></div>';
+        }
+        
+        var bookmarkHtml = '';
+        if (lesson.id !== 'empty') {
+          var bookmarkClass = saved ? ' saved' : '';
+          var bookmarkIcon = saved ? '★' : '☆';
+          bookmarkHtml = '<button class="btn btn-icon' + bookmarkClass + '" data-action="bookmark">' + bookmarkIcon + '</button>';
+        }
+        
+        card.innerHTML = 
+          '<div class="card-header">' +
+            '<div class="badge">' + escapeHtml(lesson.tag) + '</div>' +
+            '<div class="time">⏱ ' + escapeHtml(lesson.duration) + '</div>' +
+          '</div>' +
+          '<div class="media">' +
+            '<img src="' + escapeHtml(lesson.image) + '" alt="' + escapeHtml(lesson.title) + '" loading="lazy">' +
+            '<div class="media-label">✨ Quick Insight</div>' +
+          '</div>' +
+          '<div class="content">' +
+            '<h2 class="title">' + escapeHtml(lesson.title) + '</h2>' +
+            '<p class="subtitle">' + escapeHtml(lesson.subtitle) + '</p>' +
+            '<ul class="points">' + pointsHtml + '</ul>' +
+            takeawayHtml +
+          '</div>' +
+          '<div class="footer">' +
+            '<div class="actions">' +
+              '<button class="btn btn-primary" data-action="next"><span>Next Lesson</span><span>→</span></button>' +
+              bookmarkHtml +
+            '</div>' +
+            '<div class="progress-wrap">' +
+              '<div class="progress-bar"><div class="progress-fill" style="width:' + progressPercent + '%"></div></div>' +
+              '<div class="progress-text">' + (currentIndex + 1) + ' / ' + totalLessons + '</div>' +
+            '</div>' +
+          '</div>';
+        
+        if (cardClass === 'active') {
+          setTimeout(function() {
+            var nextBtn = card.querySelector('[data-action="next"]');
+            var bookmarkBtn = card.querySelector('[data-action="bookmark"]');
+            
+            if (nextBtn) {
+              nextBtn.addEventListener('click', handleNextLesson);
+            }
+            
+            if (bookmarkBtn) {
+              bookmarkBtn.addEventListener('click', function() {
+                handleBookmarkClick(lesson.id, bookmarkBtn);
+              });
+            }
+            
+            setupSwipeHandlers(card);
+          }, 0);
+        }
+        
+        return card;
+      }
+      
+      function handleNextLesson() {
+        var lessons = getLessonsForCategory(appState.currentCategory);
+        if (lessons.length === 0) return;
+        
+        var activeCard = document.querySelector('.card.active');
+        if (activeCard) {
+          activeCard.classList.add('exit');
+          activeCard.classList.remove('active');
+        }
+        
+        appState.totalViewed++;
+        var newIndex = (getCurrentIndex() + 1) % lessons.length;
+        setCurrentIndex(newIndex);
+        
+        updateStats();
+        
+        setTimeout(function() {
+          renderCards();
+        }, 400);
+      }
+      
+      function handleBookmarkClick(lessonId, buttonElement) {
+        if (lessonId === 'empty') return;
+        
+        toggleBookmark(lessonId);
+        
+        var nowSaved = isBookmarked(lessonId);
+        if (buttonElement) {
+          buttonElement.className = 'btn btn-icon' + (nowSaved ? ' saved' : '');
+          buttonElement.textContent = nowSaved ? '★' : '☆';
+        }
+        
+        if (appState.currentCategory === 'bookmarks') {
+          setTimeout(function() {
+            renderCards();
+          }, 300);
+        }
+      }
+      
+      function setupSwipeHandlers(card) {
+        var startY = null;
+        
+        card.addEventListener('touchstart', function(e) {
+          startY = e.touches[0].clientY;
+        }, {passive: true});
+        
+        card.addEventListener('touchend', function(e) {
+          if (startY === null) return;
+          var endY = e.changedTouches[0].clientY;
+          var deltaY = startY - endY;
+          if (deltaY > 50) {
+            handleNextLesson();
+          }
+          startY = null;
+        }, {passive: true});
+        
+        card.addEventListener('wheel', function(e) {
+          if (e.deltaY > 10) {
+            handleNextLesson();
+          }
+        }, {passive: true});
+      }
+      
+      function updateStats() {
+        var statsEl = document.getElementById('statsText');
+        if (statsEl) {
+          statsEl.textContent = '🔥 Day ' + appState.streakDays + ' · ' + appState.totalViewed + ' lessons';
+        }
+      }
+      
+      function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+      
+      // Initialize app
+      function init() {
+        try {
+          loadState();
+          renderNav();
+          renderCards();
+          updateStats();
+        } catch (e) {
+          console.error('Initialization error:', e);
+          var stack = document.getElementById('cardStack');
+          if (stack) {
+            stack.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><h3>Error Loading</h3><p>Please refresh the page</p></div>';
+          }
+        }
+      }
+      
+      // Run when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+      
+    })();
+  </script>
+</body>
+</html>
